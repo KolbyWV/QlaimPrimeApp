@@ -280,23 +280,27 @@ export function WorkerHomeScreen({ route, navigation }) {
       setRefreshing(false);
     }
   }, [refetch, refetchAssignments, refetchWatchlist]);
-  const captureProofPhoto = useCallback(async (kind, index) => {
+  const captureProofPhoto = useCallback(async (kind, index, source = "camera") => {
     setOperationError(null);
     try {
-      const permission = await ImagePicker.requestCameraPermissionsAsync();
-      if (!permission.granted) {
-        setOperationError("Camera permission is required to capture proof photos.");
-        return;
-      }
-
-      let result = await ImagePicker.launchCameraAsync({
-        quality: 0.7,
-        allowsEditing: false,
-        mediaTypes: "images",
-      });
-
-      // Fallback for simulator/device camera availability edge cases.
-      if (result.canceled || !result.assets?.[0]?.uri) {
+      let result;
+      if (source === "camera") {
+        const permission = await ImagePicker.requestCameraPermissionsAsync();
+        if (!permission.granted) {
+          setOperationError("Camera permission is required to capture proof photos.");
+          return;
+        }
+        result = await ImagePicker.launchCameraAsync({
+          quality: 0.7,
+          allowsEditing: false,
+          mediaTypes: "images",
+        });
+      } else {
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permission.granted) {
+          setOperationError("Photo library permission is required to select photos.");
+          return;
+        }
         result = await ImagePicker.launchImageLibraryAsync({
           quality: 0.7,
           allowsEditing: false,
@@ -350,7 +354,7 @@ export function WorkerHomeScreen({ route, navigation }) {
           />
         }
       >
-        <Heading style={{ marginTop: 2 }}>Active Assignment</Heading>
+        <Heading style={{ marginTop: 2 }}>Active Gig</Heading>
         <Body style={{ marginBottom: 12 }}>
           {selectedAssignment.gig?.title || "Untitled gig"} · {selectedAssignment.status}
         </Body>
@@ -358,7 +362,17 @@ export function WorkerHomeScreen({ route, navigation }) {
         {operationError ? <Text style={{ color: theme.colors.danger }}>{operationError}</Text> : null}
         {assignmentsError ? <Text style={{ color: theme.colors.danger }}>{assignmentsError.message}</Text> : null}
 
-        <GigCard gig={selectedAssignment.gig} watched={watchlistByGigId.has(selectedAssignment.gigId)} width={null} />
+        <GigCard
+          gig={selectedAssignment.gig}
+          watched={watchlistByGigId.has(selectedAssignment.gigId)}
+          timerMode={selectedAssignment.status === "STARTED" ? "elapsed" : "none"}
+          timerStartedAt={
+            selectedAssignment.claimedAt ||
+            selectedAssignment.assignedAt ||
+            selectedAssignment.startedAt
+          }
+          width={null}
+        />
 
         <Card>
           <Body style={{ marginBottom: 10 }}>
@@ -370,17 +384,28 @@ export function WorkerHomeScreen({ route, navigation }) {
             <>
               {action.nextStatus === "STARTED" ? (
                 <Card>
-                  <Body style={{ marginBottom: 8 }}>Required: take 2 start photos before work begins.</Body>
-                  <Button
-                    label={startProofPhotos[0] ? "Retake start photo 1" : "Take start photo 1"}
-                    variant="secondary"
-                    onPress={() => captureProofPhoto("start", 0)}
-                  />
-                  <Button
-                    label={startProofPhotos[1] ? "Retake start photo 2" : "Take start photo 2"}
-                    variant="secondary"
-                    onPress={() => captureProofPhoto("start", 1)}
-                  />
+                  <Body style={{ marginBottom: 8 }}>Required: 2 start photos before work begins.</Body>
+                  {[0, 1].map((i) => (
+                    <View key={i} style={{ marginBottom: 8 }}>
+                      <Body style={{ marginBottom: 4, fontWeight: "700" }}>
+                        Photo {i + 1}{startProofPhotos[i] ? " ✓" : ""}
+                      </Body>
+                      <View style={{ flexDirection: "row", gap: 8 }}>
+                        <Button
+                          label="Camera"
+                          variant="secondary"
+                          onPress={() => captureProofPhoto("start", i, "camera")}
+                          style={{ flex: 1 }}
+                        />
+                        <Button
+                          label="Library"
+                          variant="secondary"
+                          onPress={() => captureProofPhoto("start", i, "library")}
+                          style={{ flex: 1 }}
+                        />
+                      </View>
+                    </View>
+                  ))}
                   <Body style={{ marginBottom: 0 }}>
                     Captured: {startProofPhotos.filter(Boolean).length}/2
                   </Body>
@@ -388,17 +413,28 @@ export function WorkerHomeScreen({ route, navigation }) {
               ) : null}
               {action.nextStatus === "SUBMITTED" ? (
                 <Card>
-                  <Body style={{ marginBottom: 8 }}>Required: take 2 submission photos for review.</Body>
-                  <Button
-                    label={submitProofPhotos[0] ? "Retake submit photo 1" : "Take submit photo 1"}
-                    variant="secondary"
-                    onPress={() => captureProofPhoto("submit", 0)}
-                  />
-                  <Button
-                    label={submitProofPhotos[1] ? "Retake submit photo 2" : "Take submit photo 2"}
-                    variant="secondary"
-                    onPress={() => captureProofPhoto("submit", 1)}
-                  />
+                  <Body style={{ marginBottom: 8 }}>Required: 2 submission photos for review.</Body>
+                  {[0, 1].map((i) => (
+                    <View key={i} style={{ marginBottom: 8 }}>
+                      <Body style={{ marginBottom: 4, fontWeight: "700" }}>
+                        Photo {i + 1}{submitProofPhotos[i] ? " ✓" : ""}
+                      </Body>
+                      <View style={{ flexDirection: "row", gap: 8 }}>
+                        <Button
+                          label="Camera"
+                          variant="secondary"
+                          onPress={() => captureProofPhoto("submit", i, "camera")}
+                          style={{ flex: 1 }}
+                        />
+                        <Button
+                          label="Library"
+                          variant="secondary"
+                          onPress={() => captureProofPhoto("submit", i, "library")}
+                          style={{ flex: 1 }}
+                        />
+                      </View>
+                    </View>
+                  ))}
                   <Body style={{ marginBottom: 0 }}>
                     Captured: {submitProofPhotos.filter(Boolean).length}/2
                   </Body>
@@ -477,7 +513,7 @@ export function WorkerHomeScreen({ route, navigation }) {
 
       {hasActiveAssignmentLock ? (
         <Card>
-          <SectionTitle style={{ marginBottom: 8, marginTop: 0 }}>Active assignments</SectionTitle>
+          <SectionTitle style={{ marginBottom: 8, marginTop: 0 }}>Active Gig</SectionTitle>
           {activeAssignments.map((assignment) => (
             <View key={assignment.id} style={{ marginBottom: 8 }}>
               <Body>

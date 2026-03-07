@@ -6,7 +6,7 @@ import {
 } from "./fragments";
 
 export const GIG_QUERY = gql`
-  query Gig($id: String!) {
+  query Gig($id: ID!) {
     gig(id: $id) {
       ...GigSummary
       assignments {
@@ -19,7 +19,7 @@ export const GIG_QUERY = gql`
 `;
 
 export const GIGS_QUERY = gql`
-  query Gigs($companyId: String, $status: GigStatus, $limit: Int, $offset: Int) {
+  query Gigs($companyId: ID, $status: GigStatus, $limit: Int, $offset: Int) {
     gigs(companyId: $companyId, status: $status, limit: $limit, offset: $offset) {
       ...GigSummary
     }
@@ -44,11 +44,11 @@ export const MY_WATCHLIST_QUERY = gql`
 
 export const CREATE_GIG_MUTATION = gql`
   mutation CreateGig(
-    $companyId: String!
+    $companyId: ID!
     $title: String!
     $description: String
     $type: GigType
-    $locationId: String!
+    $locationId: ID!
     $startsAt: String
     $endsAt: String
     $payCents: Int
@@ -99,11 +99,11 @@ export const CREATE_GIG_MUTATION = gql`
 
 export const UPDATE_GIG_MUTATION = gql`
   mutation UpdateGig(
-    $gigId: String!
+    $gigId: ID!
     $title: String
     $description: String
     $type: GigType
-    $locationId: String
+    $locationId: ID
     $startsAt: String
     $endsAt: String
     $payCents: Int
@@ -151,7 +151,7 @@ export const UPDATE_GIG_MUTATION = gql`
 `;
 
 export const UPDATE_GIG_STATUS_MUTATION = gql`
-  mutation UpdateGigStatus($gigId: String!, $status: GigStatus!) {
+  mutation UpdateGigStatus($gigId: ID!, $status: GigStatus!) {
     updateGigStatus(gigId: $gigId, status: $status) {
       ...GigSummary
     }
@@ -160,13 +160,13 @@ export const UPDATE_GIG_STATUS_MUTATION = gql`
 `;
 
 export const DELETE_GIG_MUTATION = gql`
-  mutation DeleteGig($gigId: String!) {
+  mutation DeleteGig($gigId: ID!) {
     deleteGig(gigId: $gigId)
   }
 `;
 
 export const CLAIM_GIG_MUTATION = gql`
-  mutation ClaimGig($gigId: String!, $note: String) {
+  mutation ClaimGig($gigId: ID!, $note: String) {
     claimGig(gigId: $gigId, note: $note) {
       ...AssignmentSummary
     }
@@ -175,7 +175,7 @@ export const CLAIM_GIG_MUTATION = gql`
 `;
 
 export const ADD_GIG_TO_WATCHLIST_MUTATION = gql`
-  mutation AddGigToWatchlist($gigId: String!) {
+  mutation AddGigToWatchlist($gigId: ID!) {
     addGigToWatchlist(gigId: $gigId) {
       id
       gigId
@@ -186,7 +186,7 @@ export const ADD_GIG_TO_WATCHLIST_MUTATION = gql`
 `;
 
 export const REMOVE_GIG_FROM_WATCHLIST_MUTATION = gql`
-  mutation RemoveGigFromWatchlist($gigId: String!) {
+  mutation RemoveGigFromWatchlist($gigId: ID!) {
     removeGigFromWatchlist(gigId: $gigId)
   }
 `;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useSession } from "../session";
@@ -8,8 +8,13 @@ import { Body, Button, Field, Heading, Screen } from "../../ui/components";
 
 export function SignInScreen({ navigation, route }) {
   const { theme } = useAppTheme();
-  const { signIn } = useSession();
+  const { signIn, switchMode, mode } = useSession();
   const hideSignUp = Boolean(route?.params?.hideSignUp);
+  const isCompanyAuth = mode === "company";
+  const modeAccent = isCompanyAuth ? theme.colors.warning : theme.colors.primary;
+  const modeLabel = mode === "company" ? "COMPANY PORTAL" : (mode === "admin" ? "ADMIN PORTAL" : "CONTRACTOR PORTAL");
+  const modeBadgeBg = mode === "company" ? "#d6e7ff" : (mode === "admin" ? theme.colors.strongSurface : theme.colors.accentSoft);
+  const modeBadgeText = mode === "company" ? "#023e8a" : (mode === "admin" ? theme.colors.strongSurfaceText : theme.colors.strongSurface);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,20 +36,33 @@ export function SignInScreen({ navigation, route }) {
   };
 
   return (
-    <Screen scroll contentStyle={{ paddingTop: 8, paddingBottom: 30 }}>
+    <Screen hideBack scroll contentStyle={{ paddingTop: 8, paddingBottom: 30 }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-        <Pressable onPress={() => navigation.navigate("ModeReset")} hitSlop={10}>
+        <Pressable onPress={() => switchMode(null)} hitSlop={10}>
           <Ionicons name="arrow-back" size={30} color={theme.colors.text} />
         </Pressable>
         {hideSignUp ? <View /> : (
           <Pressable onPress={() => navigation.navigate("Register")} hitSlop={10}>
-            <Text style={{ color: theme.colors.primary, fontSize: 18, fontWeight: "700" }}>Sign Up</Text>
+            <Text style={{ color: modeAccent, fontSize: 18, fontWeight: "700" }}>Sign Up</Text>
           </Pressable>
         )}
       </View>
 
       <View style={{ alignItems: "center", marginTop: 22, marginBottom: 22 }}>
         <Text style={{ color: theme.colors.text, fontSize: 30, fontWeight: "900", letterSpacing: 1 }}>QLAIM</Text>
+        <View
+          style={{
+            marginTop: 8,
+            borderRadius: theme.radii.pill,
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            backgroundColor: modeBadgeBg,
+          }}
+        >
+          <Text style={{ color: modeBadgeText, fontSize: 12, fontWeight: "800", letterSpacing: 0.7 }}>
+            {modeLabel}
+          </Text>
+        </View>
       </View>
 
       <Heading style={{ fontSize: 30, marginBottom: 2 }}>Welcome back</Heading>
@@ -80,7 +98,7 @@ export function SignInScreen({ navigation, route }) {
       <Pressable onPress={() => navigation.navigate("ForgotPassword")} hitSlop={8}>
         <Text
           style={{
-            color: theme.colors.primary,
+            color: modeAccent,
             fontSize: 18,
             fontWeight: "800",
             textAlign: "right",

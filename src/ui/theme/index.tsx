@@ -1,18 +1,35 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
 import { useColorScheme } from "react-native";
 
+import { useSession } from "../../auth/session";
 import { darkTheme, lightTheme } from "./palette";
 
 const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
+  const { mode } = useSession();
   const systemScheme = useColorScheme();
   const [themeMode, setThemeMode] = useState(
     systemScheme === "dark" ? "dark" : "light",
   );
+  const isCompanyMode = mode === "company";
 
   const value = useMemo(() => {
-    const theme = themeMode === "dark" ? darkTheme : lightTheme;
+    const baseTheme = themeMode === "dark" ? darkTheme : lightTheme;
+    const companyAccent = "#023e8a";
+    const theme = isCompanyMode
+      ? {
+          ...baseTheme,
+          colors: {
+            ...baseTheme.colors,
+            primary: companyAccent,
+            accent: companyAccent,
+            warning: companyAccent,
+            accentSoft: themeMode === "dark" ? "#13345f" : "#d6e7ff",
+            iconBubble: themeMode === "dark" ? "#1d4f86" : "#b5d2ff",
+          },
+        }
+      : baseTheme;
     return {
       theme,
       themeMode,
@@ -21,7 +38,7 @@ export function ThemeProvider({ children }) {
         setThemeMode((prev) => (prev === "dark" ? "light" : "dark"));
       },
     };
-  }, [themeMode]);
+  }, [isCompanyMode, themeMode]);
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

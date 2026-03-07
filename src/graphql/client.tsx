@@ -167,9 +167,8 @@ export function createApolloClient({
     }
   };
 
-  const authLink = setContext(async (_, { headers }) => {
+  const authLink = setContext(async (operation, { headers }) => {
     let accessToken = await tokenManager.getAccessToken();
-    const refreshToken = await tokenManager.getRefreshToken();
 
     if (accessToken && isAccessTokenStale(accessToken)) {
       try {
@@ -179,11 +178,17 @@ export function createApolloClient({
       }
     }
 
+    const extraHeaders = {};
+    if (operation.operationName === "RefreshToken") {
+      const refreshToken = await tokenManager.getRefreshToken();
+      extraHeaders["x-refresh-token"] = refreshToken || "";
+    }
+
     return {
       headers: {
         ...headers,
         authorization: accessToken ? `Bearer ${accessToken}` : "",
-        "x-refresh-token": refreshToken || "",
+        ...extraHeaders,
       },
     };
   });

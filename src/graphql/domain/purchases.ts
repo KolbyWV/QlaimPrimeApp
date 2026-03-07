@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 import { PURCHASE_SUMMARY_FRAGMENT } from "./fragments";
 
 export const PURCHASE_QUERY = gql`
-  query Purchase($id: String!) {
+  query Purchase($id: ID!) {
     purchase(id: $id) {
       ...PurchaseSummary
     }
@@ -12,7 +12,7 @@ export const PURCHASE_QUERY = gql`
 `;
 
 export const PURCHASES_QUERY = gql`
-  query Purchases($contractorId: String, $status: PurchaseStatus, $limit: Int, $offset: Int) {
+  query Purchases($contractorId: ID, $status: PurchaseStatus, $limit: Int, $offset: Int) {
     purchases(contractorId: $contractorId, status: $status, limit: $limit, offset: $offset) {
       ...PurchaseSummary
     }
@@ -30,7 +30,7 @@ export const MY_PURCHASES_QUERY = gql`
 `;
 
 export const PURCHASE_PRODUCT_MUTATION = gql`
-  mutation PurchaseProduct($productId: String!, $appliedToAssignmentId: String) {
+  mutation PurchaseProduct($productId: ID!, $appliedToAssignmentId: ID) {
     purchaseProduct(productId: $productId, appliedToAssignmentId: $appliedToAssignmentId) {
       ...PurchaseSummary
     }
@@ -39,7 +39,7 @@ export const PURCHASE_PRODUCT_MUTATION = gql`
 `;
 
 export const CONSUME_PURCHASE_MUTATION = gql`
-  mutation ConsumePurchase($id: String!, $appliedToAssignmentId: String) {
+  mutation ConsumePurchase($id: ID!, $appliedToAssignmentId: ID) {
     consumePurchase(id: $id, appliedToAssignmentId: $appliedToAssignmentId) {
       ...PurchaseSummary
     }
@@ -48,7 +48,7 @@ export const CONSUME_PURCHASE_MUTATION = gql`
 `;
 
 export const EXPIRE_PURCHASE_MUTATION = gql`
-  mutation ExpirePurchase($id: String!) {
+  mutation ExpirePurchase($id: ID!) {
     expirePurchase(id: $id) {
       ...PurchaseSummary
     }

@@ -38,7 +38,7 @@ export function WorkerPastAssignmentsScreen() {
   if (loading) {
     return (
       <Screen>
-        <LoadingState label="Loading past assignments..." />
+        <LoadingState label="Loading gig history..." />
       </Screen>
     );
   }
@@ -55,9 +55,9 @@ export function WorkerPastAssignmentsScreen() {
         />
       }
     >
-      <Heading>Assignments</Heading>
+      <Heading>Gig History</Heading>
       <Body style={{ marginBottom: 12 }}>
-        Submitted, completed, or closed assignments from `assignmentHistory`.
+        Submitted, completed, or closed gigs from `assignmentHistory`.
       </Body>
       {error ? <Text style={{ color: theme.colors.danger }}>{error.message}</Text> : null}
       {refreshError ? <Text style={{ color: theme.colors.danger }}>{refreshError}</Text> : null}
@@ -73,7 +73,7 @@ export function WorkerPastAssignmentsScreen() {
 
       {pastAssignments.length === 0 ? (
         <Card>
-          <Body>No past assignments yet.</Body>
+          <Body>No gig history yet.</Body>
         </Card>
       ) : null}
     </Screen>

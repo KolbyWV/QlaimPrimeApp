@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 import { PRODUCT_SUMMARY_FRAGMENT } from "./fragments";
 
 export const PRODUCT_QUERY = gql`
-  query Product($id: String!) {
+  query Product($id: ID!) {
     product(id: $id) {
       ...ProductSummary
     }
@@ -47,7 +47,7 @@ export const CREATE_PRODUCT_MUTATION = gql`
 
 export const UPDATE_PRODUCT_MUTATION = gql`
   mutation UpdateProduct(
-    $id: String!
+    $id: ID!
     $category: ProductCategory
     $tier: MembershipTier
     $title: String

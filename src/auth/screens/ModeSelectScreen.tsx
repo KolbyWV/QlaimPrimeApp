@@ -10,7 +10,7 @@ export function ModeSelectScreen() {
   const { theme } = useAppTheme();
 
   return (
-    <Screen scroll contentStyle={{ justifyContent: "space-between", flexGrow: 1 }}>
+    <Screen hideBack scroll contentStyle={{ justifyContent: "space-between", flexGrow: 1 }}>
       <View>
         <View style={{ alignItems: "center", marginTop: 100 }}>
           <Text style={{ color: theme.colors.text, fontSize: 30, fontWeight: "900", letterSpacing: 1 }}>QLAIM</Text>

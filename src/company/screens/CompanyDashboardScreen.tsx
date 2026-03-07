@@ -38,14 +38,14 @@ export function CompanyDashboardScreen({ navigation }) {
 
   if (loading || (canModerateRequests && membershipRequestsQuery.loading)) {
     return (
-      <Screen>
+      <Screen hideBack>
         <LoadingState label="Loading companies..." />
       </Screen>
     );
   }
 
   return (
-    <Screen scroll>
+    <Screen hideBack scroll>
       <Heading>Company dashboard</Heading>
       <Body style={{ marginBottom: 20 }}>My companies and quick actions.</Body>
 

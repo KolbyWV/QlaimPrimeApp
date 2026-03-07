@@ -7,7 +7,6 @@ import { Platform } from "react-native";
 
 import { useSession } from "../auth/session";
 import { AdminDashboardScreen } from "../admin/screens/AdminDashboardScreen";
-import { ModeResetScreen } from "../auth/screens/ModeResetScreen";
 import { ModeSelectScreen } from "../auth/screens/ModeSelectScreen";
 import { ForgotPasswordScreen } from "../auth/screens/ForgotPasswordScreen";
 import { RegisterScreen } from "../auth/screens/RegisterScreen";
@@ -23,7 +22,7 @@ import { CompanyMembersScreen } from "../company/screens/CompanyMembersScreen";
 import { CompanyOnboardingScreen } from "../company/screens/CompanyOnboardingScreen";
 import { CompanyReviewsScreen } from "../company/screens/CompanyReviewsScreen";
 import { WorkerAccountScreen } from "../worker/screens/WorkerAccountScreen";
-import { WorkerAssignmentsScreen } from "../worker/screens/WorkerAssignmentsScreen";
+import { WorkerWatchlistScreen } from "../worker/screens/WorkerWatchlistScreen";
 import { WorkerGigDetailScreen } from "../worker/screens/WorkerGigDetailScreen";
 import { WorkerHomeScreen } from "../worker/screens/WorkerHomeScreen";
 import { WorkerOnboardingScreen } from "../worker/screens/WorkerOnboardingScreen";
@@ -64,11 +63,6 @@ function AuthNavigator() {
         name="ForgotPassword"
         component={ForgotPasswordScreen}
       />
-      <AuthStack.Screen
-        name="ModeReset"
-        component={ModeResetScreen}
-        options={{ presentation: "modal" }}
-      />
     </AuthStack.Navigator>
   );
 }
@@ -84,11 +78,6 @@ function AdminAuthNavigator() {
       <AdminAuthStack.Screen
         name="ForgotPassword"
         component={ForgotPasswordScreen}
-      />
-      <AdminAuthStack.Screen
-        name="ModeReset"
-        component={ModeResetScreen}
-        options={{ presentation: "modal" }}
       />
     </AdminAuthStack.Navigator>
   );
@@ -227,7 +216,7 @@ function WorkerTabsNavigator() {
       })}
     >
       <WorkerTabs.Screen name="Home" component={WorkerHomeNavigator} />
-      <WorkerTabs.Screen name="Watchlist" component={WorkerAssignmentsScreen} />
+      <WorkerTabs.Screen name="Watchlist" component={WorkerWatchlistScreen} />
       <WorkerTabs.Screen name="Shop" component={WorkerShopScreen} />
       <WorkerTabs.Screen name="Profile" component={WorkerAccountNavigator} />
     </WorkerTabs.Navigator>

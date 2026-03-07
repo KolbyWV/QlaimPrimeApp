@@ -6,7 +6,7 @@ import {
 } from "./fragments";
 
 export const STARS_TRANSACTIONS_QUERY = gql`
-  query StarsTransactions($contractorId: String, $limit: Int, $offset: Int) {
+  query StarsTransactions($contractorId: ID, $limit: Int, $offset: Int) {
     starsTransactions(contractorId: $contractorId, limit: $limit, offset: $offset) {
       ...StarsTransactionSummary
     }
@@ -15,7 +15,7 @@ export const STARS_TRANSACTIONS_QUERY = gql`
 `;
 
 export const MONEY_TRANSACTIONS_QUERY = gql`
-  query MoneyTransactions($contractorId: String, $limit: Int, $offset: Int) {
+  query MoneyTransactions($contractorId: ID, $limit: Int, $offset: Int) {
     moneyTransactions(contractorId: $contractorId, limit: $limit, offset: $offset) {
       ...MoneyTransactionSummary
     }
@@ -43,12 +43,12 @@ export const MY_MONEY_TRANSACTIONS_QUERY = gql`
 
 export const CREATE_STARS_TRANSACTION_MUTATION = gql`
   mutation CreateStarsTransaction(
-    $contractorId: String!
+    $contractorId: ID!
     $delta: Int!
     $reason: StarsReason!
-    $gigId: String
-    $assignmentId: String
-    $purchaseId: String
+    $gigId: ID
+    $assignmentId: ID
+    $purchaseId: ID
   ) {
     createStarsTransaction(
       contractorId: $contractorId
@@ -66,11 +66,11 @@ export const CREATE_STARS_TRANSACTION_MUTATION = gql`
 
 export const CREATE_MONEY_TRANSACTION_MUTATION = gql`
   mutation CreateMoneyTransaction(
-    $contractorId: String!
+    $contractorId: ID!
     $amountCents: Int!
     $reason: MoneyReason!
-    $gigId: String
-    $assignmentId: String
+    $gigId: ID
+    $assignmentId: ID
   ) {
     createMoneyTransaction(
       contractorId: $contractorId

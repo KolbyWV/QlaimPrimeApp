@@ -41,7 +41,7 @@ export function CompanyReviewsScreen() {
 
   if (companyQuery.loading || gigsQuery.loading || assignmentsQuery.loading) {
     return (
-      <Screen>
+      <Screen hideBack>
         <LoadingState label="Loading review queue..." />
       </Screen>
     );
@@ -50,7 +50,7 @@ export function CompanyReviewsScreen() {
   const globalError = companyQuery.error || gigsQuery.error || assignmentsQuery.error;
 
   return (
-    <Screen scroll>
+    <Screen hideBack scroll>
       <Heading>Review queue</Heading>
       <Body style={{ marginBottom: 12 }}>
         Reviewing assignments for {gigsQuery.data?.gigs?.[0]?.title || "your latest gig"}.

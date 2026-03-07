@@ -7,7 +7,7 @@ import {
 
 export const COMPANY_MEMBERSHIP_REQUESTS_QUERY = gql`
   query CompanyMembershipRequests(
-    $companyId: String!
+    $companyId: ID!
     $status: MembershipRequestStatus
     $limit: Int
     $offset: Int
@@ -39,7 +39,7 @@ export const MY_COMPANY_MEMBERSHIP_REQUESTS_QUERY = gql`
 
 export const REQUEST_COMPANY_MEMBERSHIP_MUTATION = gql`
   mutation RequestCompanyMembership(
-    $companyId: String!
+    $companyId: ID!
     $requestedRole: CompanyRole
     $note: String
   ) {
@@ -55,7 +55,7 @@ export const REQUEST_COMPANY_MEMBERSHIP_MUTATION = gql`
 `;
 
 export const APPROVE_COMPANY_MEMBERSHIP_REQUEST_MUTATION = gql`
-  mutation ApproveCompanyMembershipRequest($requestId: String!, $role: CompanyRole) {
+  mutation ApproveCompanyMembershipRequest($requestId: ID!, $role: CompanyRole) {
     approveCompanyMembershipRequest(requestId: $requestId, role: $role) {
       ...MemberSummary
     }
@@ -64,7 +64,7 @@ export const APPROVE_COMPANY_MEMBERSHIP_REQUEST_MUTATION = gql`
 `;
 
 export const DENY_COMPANY_MEMBERSHIP_REQUEST_MUTATION = gql`
-  mutation DenyCompanyMembershipRequest($requestId: String!, $reason: String) {
+  mutation DenyCompanyMembershipRequest($requestId: ID!, $reason: String) {
     denyCompanyMembershipRequest(requestId: $requestId, reason: $reason) {
       ...CompanyMembershipRequestSummary
     }

@@ -31,7 +31,7 @@ function matchesSearch(entry, search) {
   return combined.includes(search);
 }
 
-export function WorkerAssignmentsScreen({ navigation }) {
+export function WorkerWatchlistScreen({ navigation }) {
   const { theme } = useAppTheme();
   const [search, setSearch] = useState("");
   const [operationError, setOperationError] = useState(null);

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Image, Linking, Platform, Pressable, Text, View } from "react-native";
+import { Linking, Pressable, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "@apollo/client/react";
 
@@ -23,12 +23,7 @@ function formatCountdown(endsAt, nowMs) {
   const diffSeconds = Math.max(0, Math.floor((endMs - nowMs) / 1000));
   const hours = String(Math.floor(diffSeconds / 3600)).padStart(2, "0");
   const minutes = String(Math.floor((diffSeconds % 3600) / 60)).padStart(2, "0");
-  const seconds = String(diffSeconds % 60).padStart(2, "0");
-  return `${hours}:${minutes}:${seconds}`;
-}
-
-function buildMapPreviewUrl(lat, lng) {
-  return `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=13&size=900x320&markers=${lat},${lng},red-pushpin`;
+  return `${hours}:${minutes}`;
 }
 
 function buildMapsLink(gig) {
@@ -150,12 +145,9 @@ export function WorkerGigDetailScreen({ route, navigation }) {
   const countdown = useMemo(() => formatCountdown(gig?.endsAt, nowMs), [gig?.endsAt, nowMs]);
 
   const mapLink = useMemo(() => buildMapsLink(gig), [gig]);
-  const canShowMapImage =
-    typeof gig?.location?.lat === "number" && typeof gig?.location?.lng === "number";
-
   useEffect(() => {
     if (!gig?.endsAt) return undefined;
-    const interval = setInterval(() => setNowMs(Date.now()), 1000);
+    const interval = setInterval(() => setNowMs(Date.now()), 30 * 1000);
     return () => clearInterval(interval);
   }, [gig?.endsAt]);
 
@@ -237,9 +229,6 @@ export function WorkerGigDetailScreen({ route, navigation }) {
           <View style={{ backgroundColor: theme.colors.strongSurface, borderRadius: theme.radii.sm, paddingHorizontal: 10, paddingVertical: 6, marginRight: 8, marginBottom: 8 }}>
             <Text style={{ color: theme.colors.strongSurfaceText, fontWeight: "700" }}>{gig.type}</Text>
           </View>
-          <View style={{ backgroundColor: theme.colors.accentSoft, borderRadius: theme.radii.sm, paddingHorizontal: 10, paddingVertical: 6, marginRight: 8, marginBottom: 8 }}>
-            <Text style={{ color: theme.colors.text, fontWeight: "700" }}>Tier: {gig.requiredTier || "COPPER"}</Text>
-          </View>
           <View style={{ backgroundColor: theme.colors.surfaceAlt, borderRadius: theme.radii.sm, paddingHorizontal: 10, paddingVertical: 6, marginBottom: 8 }}>
             <Text style={{ color: theme.colors.text, fontWeight: "700" }}>Stars: {gig.totalStarsReward ?? gig.baseStars ?? 0}</Text>
           </View>
@@ -256,8 +245,8 @@ export function WorkerGigDetailScreen({ route, navigation }) {
           </Pressable>
         ) : null}
 
-        <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 4 }}>
-          <Body style={{ marginBottom: 0 }}>Starts: {formatDate(gig.startsAt)}</Body>
+        <View style={{ marginBottom: 4 }}>
+          <Body style={{ marginBottom: 2 }}>Starts: {formatDate(gig.startsAt)}</Body>
           <Body style={{ marginBottom: 0 }}>Ends: {formatDate(gig.endsAt)}</Body>
         </View>
       </Card>
@@ -272,36 +261,6 @@ export function WorkerGigDetailScreen({ route, navigation }) {
             .filter(Boolean)
             .join(", ") || "Address not available"}
         </Body>
-
-        {canShowMapImage ? (
-          <Image
-            source={{ uri: buildMapPreviewUrl(gig.location.lat, gig.location.lng) }}
-            style={{
-              width: "100%",
-              height: Platform.OS === "web" ? 220 : 180,
-              borderRadius: theme.radii.md,
-              marginBottom: 10,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-            }}
-            resizeMode="cover"
-          />
-        ) : (
-          <View
-            style={{
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              borderRadius: theme.radii.md,
-              height: 120,
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: 10,
-              backgroundColor: theme.colors.surfaceAlt,
-            }}
-          >
-            <Body style={{ marginBottom: 0 }}>Map preview unavailable for this location.</Body>
-          </View>
-        )}
 
         <Button
           label="Open in maps"

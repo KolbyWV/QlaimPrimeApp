@@ -12,7 +12,7 @@ export function CompanyAccountScreen() {
   const canAccessAdmin = me?.role === "ADMIN";
 
   return (
-    <Screen scroll>
+    <Screen hideBack scroll>
       <Heading>Company account</Heading>
       <Body style={{ marginBottom: 12 }}>Switch modes, theme, or session.</Body>
 
@@ -23,7 +23,7 @@ export function CompanyAccountScreen() {
       </Card>
 
       <Card>
-        <Button label="Switch to Profile Mode" onPress={() => switchMode("worker")} />
+        <Button label="Switch to Contractor Mode" onPress={() => switchMode("worker")} />
         {canAccessAdmin ? (
           <Button label="Switch to Admin Mode" variant="secondary" onPress={() => switchMode("admin")} />
         ) : null}

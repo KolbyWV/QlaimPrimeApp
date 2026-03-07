@@ -12,7 +12,7 @@ export const LOCATIONS_QUERY = gql`
 `;
 
 export const LOCATION_QUERY = gql`
-  query Location($id: String!) {
+  query Location($id: ID!) {
     location(id: $id) {
       ...LocationSummary
     }
@@ -47,7 +47,7 @@ export const CREATE_LOCATION_MUTATION = gql`
 
 export const UPDATE_LOCATION_MUTATION = gql`
   mutation UpdateLocation(
-    $id: String!
+    $id: ID!
     $name: String
     $address: String
     $city: String
@@ -73,7 +73,7 @@ export const UPDATE_LOCATION_MUTATION = gql`
 `;
 
 export const DELETE_LOCATION_MUTATION = gql`
-  mutation DeleteLocation($id: String!) {
+  mutation DeleteLocation($id: ID!) {
     deleteLocation(id: $id)
   }
 `;

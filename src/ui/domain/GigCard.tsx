@@ -1,11 +1,11 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useAppTheme } from "../theme";
 import { Card } from "../components";
 
-function formatCountdown(endsAt) {
+function formatCountdown(endsAt, nowMs) {
   if (!endsAt) {
     return null;
   }
@@ -15,11 +15,26 @@ function formatCountdown(endsAt) {
     return null;
   }
 
-  const remainingSeconds = Math.max(0, Math.floor((end - Date.now()) / 1000));
+  const remainingSeconds = Math.max(0, Math.floor((end - nowMs) / 1000));
   const hours = String(Math.floor(remainingSeconds / 3600)).padStart(2, "0");
   const minutes = String(Math.floor((remainingSeconds % 3600) / 60)).padStart(2, "0");
-  const seconds = String(remainingSeconds % 60).padStart(2, "0");
-  return `${hours}:${minutes}:${seconds}`;
+  return `${hours}:${minutes}`;
+}
+
+function formatElapsed(sinceAt, nowMs) {
+  if (!sinceAt) {
+    return null;
+  }
+
+  const start = new Date(sinceAt).getTime();
+  if (!Number.isFinite(start)) {
+    return null;
+  }
+
+  const elapsedSeconds = Math.max(0, Math.floor((nowMs - start) / 1000));
+  const hours = String(Math.floor(elapsedSeconds / 3600)).padStart(2, "0");
+  const minutes = String(Math.floor((elapsedSeconds % 3600) / 60)).padStart(2, "0");
+  return `${hours}:${minutes}`;
 }
 
 export function GigCard({
@@ -27,15 +42,21 @@ export function GigCard({
   watched = false,
   onPress,
   onToggleWatch,
-  showCountdown = false,
+  timerMode = "countdown",
+  timerStartedAt,
   style,
   width,
   children,
 }) {
   const { theme } = useAppTheme();
   const { width: windowWidth } = useWindowDimensions();
+  const [nowMs, setNowMs] = useState(() => Date.now());
 
-  const countdown = useMemo(() => formatCountdown(gig?.endsAt), [gig?.endsAt]);
+  const timerText = useMemo(() => {
+    if (timerMode === "none") return null;
+    if (timerMode === "elapsed") return formatElapsed(timerStartedAt, nowMs);
+    return formatCountdown(gig?.endsAt, nowMs);
+  }, [gig?.endsAt, nowMs, timerMode, timerStartedAt]);
   const defaultCardWidth = useMemo(() => {
     if (Platform.OS === "web") {
       return 340;
@@ -43,6 +64,13 @@ export function GigCard({
     return Math.min(Math.max(windowWidth - 64, 260), 340);
   }, [windowWidth]);
   const resolvedWidth = typeof width === "number" ? width : (width === null ? null : defaultCardWidth);
+
+  useEffect(() => {
+    const hasTimerSource = timerMode === "elapsed" ? Boolean(timerStartedAt) : Boolean(gig?.endsAt);
+    if (!hasTimerSource || timerMode === "none") return undefined;
+    const interval = setInterval(() => setNowMs(Date.now()), 30 * 1000);
+    return () => clearInterval(interval);
+  }, [gig?.endsAt, timerMode, timerStartedAt]);
 
   const content = (
     <Card
@@ -134,7 +162,7 @@ export function GigCard({
         </View>
       </View>
 
-      {showCountdown && countdown ? (
+      {timerText ? (
         <View
           style={{
             marginTop: theme.spacing.md,
@@ -145,7 +173,7 @@ export function GigCard({
           }}
         >
           <Text style={{ color: theme.colors.strongSurfaceText, fontSize: 28, lineHeight: 32, fontWeight: "800" }}>
-            {countdown}
+            {timerText}
           </Text>
         </View>
       ) : null}

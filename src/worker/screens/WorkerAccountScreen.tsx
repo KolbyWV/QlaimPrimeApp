@@ -49,7 +49,7 @@ export function WorkerAccountScreen({ navigation }) {
       <SectionTitle>Account actions</SectionTitle>
       <Card>
         <Button
-          label="Assignments"
+          label="Gig History"
           variant="secondary"
           onPress={() => navigation.navigate("PastAssignments")}
         />

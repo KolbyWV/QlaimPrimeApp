@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 import { REVIEW_SUMMARY_FRAGMENT } from "./fragments";
 
 export const GIG_REVIEW_QUERY = gql`
-  query GigReview($id: String!) {
+  query GigReview($id: ID!) {
     gigReview(id: $id) {
       ...ReviewSummary
     }
@@ -12,7 +12,7 @@ export const GIG_REVIEW_QUERY = gql`
 `;
 
 export const GIG_REVIEWS_FOR_GIG_QUERY = gql`
-  query GigReviewsForGig($gigId: String!, $limit: Int, $offset: Int) {
+  query GigReviewsForGig($gigId: ID!, $limit: Int, $offset: Int) {
     gigReviewsForGig(gigId: $gigId, limit: $limit, offset: $offset) {
       ...ReviewSummary
     }
@@ -22,7 +22,7 @@ export const GIG_REVIEWS_FOR_GIG_QUERY = gql`
 
 export const CREATE_GIG_REVIEW_MUTATION = gql`
   mutation CreateGigReview(
-    $assignmentId: String!
+    $assignmentId: ID!
     $starsRating: Int!
     $decision: ReviewDecision!
     $comment: String

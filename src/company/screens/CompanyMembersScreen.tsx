@@ -58,7 +58,7 @@ export function CompanyMembersScreen() {
 
   if (companyQuery.loading || membersQuery.loading || requestsQuery.loading) {
     return (
-      <Screen>
+      <Screen hideBack>
         <LoadingState label="Loading members..." />
       </Screen>
     );
@@ -68,7 +68,7 @@ export function CompanyMembersScreen() {
   const pendingRequests = requestsQuery.data?.companyMembershipRequests || [];
 
   return (
-    <Screen scroll>
+    <Screen hideBack scroll>
       <Heading>Members</Heading>
       <Body style={{ marginBottom: 12 }}>
         Membership requests and active company members.

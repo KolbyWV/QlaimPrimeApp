@@ -12,7 +12,7 @@ export const MEMBERS_QUERY = gql`
 `;
 
 export const COMPANY_MEMBERS_QUERY = gql`
-  query CompanyMembers($companyId: String!) {
+  query CompanyMembers($companyId: ID!) {
     companyMembers(companyId: $companyId) {
       ...MemberSummary
     }
@@ -21,7 +21,7 @@ export const COMPANY_MEMBERS_QUERY = gql`
 `;
 
 export const ADD_COMPANY_MEMBER_MUTATION = gql`
-  mutation AddCompanyMember($companyId: String!, $userId: String!, $role: CompanyRole!) {
+  mutation AddCompanyMember($companyId: ID!, $userId: ID!, $role: CompanyRole!) {
     addCompanyMember(companyId: $companyId, userId: $userId, role: $role) {
       ...MemberSummary
     }
@@ -30,7 +30,7 @@ export const ADD_COMPANY_MEMBER_MUTATION = gql`
 `;
 
 export const UPDATE_COMPANY_MEMBER_ROLE_MUTATION = gql`
-  mutation UpdateCompanyMemberRole($companyId: String!, $userId: String!, $role: CompanyRole!) {
+  mutation UpdateCompanyMemberRole($companyId: ID!, $userId: ID!, $role: CompanyRole!) {
     updateCompanyMemberRole(companyId: $companyId, userId: $userId, role: $role) {
       ...MemberSummary
     }
@@ -39,13 +39,13 @@ export const UPDATE_COMPANY_MEMBER_ROLE_MUTATION = gql`
 `;
 
 export const REMOVE_COMPANY_MEMBER_MUTATION = gql`
-  mutation RemoveCompanyMember($companyId: String!, $userId: String!) {
+  mutation RemoveCompanyMember($companyId: ID!, $userId: ID!) {
     removeCompanyMember(companyId: $companyId, userId: $userId)
   }
 `;
 
 export const LEAVE_COMPANY_MUTATION = gql`
-  mutation LeaveCompany($companyId: String!) {
+  mutation LeaveCompany($companyId: ID!) {
     leaveCompany(companyId: $companyId)
   }
 `;

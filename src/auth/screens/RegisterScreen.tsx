@@ -8,7 +8,12 @@ import { useAppTheme } from "../../ui/theme";
 
 export function RegisterScreen({ navigation }) {
   const { theme } = useAppTheme();
-  const { register } = useSession();
+  const { register, mode } = useSession();
+  const isCompanyAuth = mode === "company";
+  const modeAccent = isCompanyAuth ? theme.colors.warning : theme.colors.primary;
+  const modeLabel = mode === "company" ? "COMPANY PORTAL" : (mode === "admin" ? "ADMIN PORTAL" : "CONTRACTOR PORTAL");
+  const modeBadgeBg = mode === "company" ? "#d6e7ff" : (mode === "admin" ? theme.colors.strongSurface : theme.colors.accentSoft);
+  const modeBadgeText = mode === "company" ? "#023e8a" : (mode === "admin" ? theme.colors.strongSurfaceText : theme.colors.strongSurface);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,22 +42,31 @@ export function RegisterScreen({ navigation }) {
   };
 
   return (
-    <Screen scroll contentStyle={{ paddingTop: 8, paddingBottom: 30 }}>
+    <Screen hideBack scroll contentStyle={{ paddingTop: 8, paddingBottom: 30 }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
         <Pressable onPress={() => navigation.goBack()} hitSlop={10}>
           <Ionicons name="arrow-back" size={30} color={theme.colors.text} />
         </Pressable>
         <Pressable onPress={() => navigation.goBack()} hitSlop={10}>
-          <Text style={{ color: theme.colors.primary, fontSize: 18, fontWeight: "700" }}>Sign In</Text>
+          <Text style={{ color: modeAccent, fontSize: 18, fontWeight: "700" }}>Sign In</Text>
         </Pressable>
       </View>
 
       <View style={{ alignItems: "center", marginTop: 22, marginBottom: 12 }}>
-        <Image
-          source={require("../../images/logos/QlaimBig.png")}
-          style={{ width: 140, height: 140 }}
-          resizeMode="contain"
-        />
+        <Text style={{ color: theme.colors.text, fontSize: 30, fontWeight: "900", letterSpacing: 1 }}>QLAIM</Text>
+        <View
+          style={{
+            marginTop: 4,
+            borderRadius: theme.radii.pill,
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            backgroundColor: modeBadgeBg,
+          }}
+        >
+          <Text style={{ color: modeBadgeText, fontSize: 12, fontWeight: "800", letterSpacing: 0.7 }}>
+            {modeLabel}
+          </Text>
+        </View>
       </View>
 
       <Heading style={{ fontSize: 30, marginBottom: 4 }}>Create account</Heading>

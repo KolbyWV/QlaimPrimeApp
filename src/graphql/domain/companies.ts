@@ -33,7 +33,7 @@ export const MY_COMPANIES_QUERY = gql`
 `;
 
 export const COMPANY_QUERY = gql`
-  query Company($id: String!) {
+  query Company($id: ID!) {
     company(id: $id) {
       ...CompanySummary
       members {
@@ -55,7 +55,7 @@ export const CREATE_COMPANY_MUTATION = gql`
 `;
 
 export const UPDATE_COMPANY_MUTATION = gql`
-  mutation UpdateCompany($companyId: String!, $name: String, $logoUrl: String) {
+  mutation UpdateCompany($companyId: ID!, $name: String, $logoUrl: String) {
     updateCompany(companyId: $companyId, name: $name, logoUrl: $logoUrl) {
       ...CompanySummary
     }
@@ -64,7 +64,7 @@ export const UPDATE_COMPANY_MUTATION = gql`
 `;
 
 export const DELETE_COMPANY_MUTATION = gql`
-  mutation DeleteCompany($companyId: String!) {
+  mutation DeleteCompany($companyId: ID!) {
     deleteCompany(companyId: $companyId)
   }
 `;

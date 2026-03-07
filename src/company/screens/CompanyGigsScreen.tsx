@@ -44,7 +44,7 @@ export function CompanyGigsScreen() {
 
   if (companyQuery.loading || gigsQuery.loading) {
     return (
-      <Screen>
+      <Screen hideBack>
         <LoadingState label="Loading company gigs..." />
       </Screen>
     );
@@ -53,7 +53,7 @@ export function CompanyGigsScreen() {
   const gigs = gigsQuery.data?.gigs || [];
 
   return (
-    <Screen scroll>
+    <Screen hideBack scroll>
       <Heading>Company gigs</Heading>
       <Body style={{ marginBottom: 12 }}>
         Showing gigs for {companyQuery.data?.myCompanies?.[0]?.name || "your first company"}.

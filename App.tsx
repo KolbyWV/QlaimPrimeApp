@@ -59,13 +59,13 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <ThemeProvider>
-          <AppErrorBoundary>
-            <SessionProvider>
+        <AppErrorBoundary>
+          <SessionProvider>
+            <ThemeProvider>
               <AppShell />
-            </SessionProvider>
-          </AppErrorBoundary>
-        </ThemeProvider>
+            </ThemeProvider>
+          </SessionProvider>
+        </AppErrorBoundary>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
