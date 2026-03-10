@@ -1,6 +1,7 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 
+import { version } from "../../../package.json";
 import { useSession } from "../session";
 import { Body, Button, Heading, Screen } from "../../ui/components";
 import { useAppTheme } from "../../ui/theme";
@@ -15,7 +16,7 @@ export function ModeSelectScreen() {
         <View style={{ alignItems: "center", marginTop: 100 }}>
           <Text style={{ color: theme.colors.text, fontSize: 30, fontWeight: "900", letterSpacing: 1 }}>QLAIM</Text>
           <Text style={{ color: theme.colors.primary, fontSize: 16, fontWeight: "700", marginTop: 4 }}>
-            Version 1.2.0
+            Version {version}
           </Text>
         </View>
 

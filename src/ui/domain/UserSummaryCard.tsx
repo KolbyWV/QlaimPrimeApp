@@ -43,24 +43,36 @@ export function UserSummaryCard({
   const { theme } = useAppTheme();
   const { width } = useWindowDimensions();
   const isMobile = Platform.OS !== "web" && width <= 430;
+  const isCompact = isMobile && width <= 390;
 
   const cardPadding = isMobile ? theme.spacing.md : theme.spacing.lg;
-  const nameSize = isMobile ? 16 : 22;
-  const nameLineHeight = isMobile ? 22 : 28;
-  const usernameSize = isMobile ? 14 : 18;
-  const usernameLineHeight = isMobile ? 18 : 22;
-  const statLabelSize = isMobile ? 13 : 16;
-  const statValueSize = isMobile ? 16 : 20;
-  const statIconSize = isMobile ? 18 : 24;
+  const nameSize = isCompact ? 15 : isMobile ? 16 : 22;
+  const nameLineHeight = isCompact ? 20 : isMobile ? 22 : 28;
+  const usernameSize = isCompact ? 13 : isMobile ? 14 : 18;
+  const usernameLineHeight = isCompact ? 16 : isMobile ? 18 : 22;
+  const statLabelSize = isCompact ? 12 : isMobile ? 13 : 16;
+  const statValueSize = isCompact ? 14 : isMobile ? 16 : 20;
+  const statIconSize = isCompact ? 16 : isMobile ? 18 : 24;
   const tierFontSize = isMobile ? 13 : 16;
   const tierPaddingX = isMobile ? 8 : 10;
   const tierPaddingY = isMobile ? 4 : 5;
-  const avatarSize = isMobile ? 56 : 72;
+  const avatarSize = isCompact ? 52 : isMobile ? 56 : 72;
   const tierBadgeHeight = tier ? tierFontSize + tierPaddingY * 2 : 0;
   const tierRowSpacing = tier ? 10 : 0;
   const bottomStatReserve = tierBadgeHeight + tierRowSpacing;
-  const baseColumnHeight = isMobile ? 112 : 128;
+  const baseColumnHeight = starsOnly
+    ? isCompact
+      ? 118
+      : isMobile
+        ? 126
+        : 128
+    : isCompact
+      ? 146
+      : isMobile
+        ? 154
+        : 160;
   const columnHeight = baseColumnHeight + bottomStatReserve;
+  const rightColumnWidth = isCompact ? 88 : isMobile ? 98 : 124;
   const ratingValue = Number.isFinite(Number(ratingAvg)) ? Number(ratingAvg).toFixed(1) : "0.0";
   const tierBubbleColor = getTierBubbleColor(tier, theme);
 
@@ -114,9 +126,9 @@ export function UserSummaryCard({
       ]}
     >
       <View style={{ flexDirection: "row", alignItems: "stretch" }}>
-        <View style={{ flex: 1, height: columnHeight, position: "relative" }}>
-          <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
-            <View style={{ marginRight: isMobile ? 10 : 14, justifyContent: "flex-start" }}>
+        <View style={{ flex: 1, minWidth: 0, height: columnHeight, position: "relative" }}>
+          <View style={{ flex: 1, width: "100%", flexDirection: isMobile ? "column" : "row", alignItems: "flex-start" }}>
+            <View style={{ marginRight: isMobile ? 0 : 14, marginBottom: isMobile ? 8 : 0, justifyContent: "flex-start", flexShrink: 0 }}>
               {avatarUrl ? (
                 <Image
                   source={{ uri: avatarUrl }}
@@ -145,7 +157,7 @@ export function UserSummaryCard({
                 </View>
               )}
             </View>
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, width: "100%", minWidth: 0 }}>
               <Text
                 style={{
                   color: theme.colors.strongSurfaceText,
@@ -178,6 +190,8 @@ export function UserSummaryCard({
             justifyContent: "space-between",
             marginLeft: 8,
             height: columnHeight,
+            width: rightColumnWidth,
+            flexShrink: 0,
           }}
         >
           {rightStats.map((stat) => (
