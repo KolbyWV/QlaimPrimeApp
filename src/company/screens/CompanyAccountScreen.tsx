@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Alert } from "react-native";
+import { Alert, Text } from "react-native";
 import { useMutation, useQuery } from "@apollo/client/react";
 import * as ImagePicker from "expo-image-picker";
 

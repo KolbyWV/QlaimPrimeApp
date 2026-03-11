@@ -7,6 +7,7 @@ import {
   buildApplePassword,
   isAppleAuthCanceled,
   isExistingAccountError,
+  saveAppleEmailForUser,
   startAppleAuthentication,
 } from "../appleAuth";
 import { Body, Button, Field, Heading, Screen } from "../../ui/components";
@@ -53,21 +54,24 @@ export function RegisterScreen({ navigation }) {
     setError(null);
 
     try {
-      const { userId, email } = await startAppleAuthentication();
-      if (!email) {
+      const { userId, email: appleEmail } = await startAppleAuthentication();
+      const fallbackEmail = String(email || "").trim().toLowerCase();
+      const resolvedEmail = appleEmail || fallbackEmail || null;
+      if (!resolvedEmail) {
         throw new Error(
-          "Apple did not share your email for this account. Use Sign in with Apple from the Sign In screen if you already created an account before.",
+          "Apple did not share your email. Enter your email above, then tap Sign up with Apple again.",
         );
       }
 
+      await saveAppleEmailForUser(userId, resolvedEmail);
       const password = buildApplePassword(userId);
       try {
-        await register({ email, password });
+        await register({ email: resolvedEmail, password });
       } catch (registerError) {
         if (!isExistingAccountError(registerError?.message)) {
           throw registerError;
         }
-        await signIn({ email, password });
+        await signIn({ email: resolvedEmail, password });
       }
     } catch (nextError) {
       if (isAppleAuthCanceled(nextError)) {

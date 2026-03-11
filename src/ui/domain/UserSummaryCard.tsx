@@ -38,6 +38,7 @@ export function UserSummaryCard({
   ratingAvg = null,
   moneyBalanceCents = null,
   starsOnly = false,
+  showIdentity = false,
   style,
 }) {
   const { theme } = useAppTheme();
@@ -127,8 +128,8 @@ export function UserSummaryCard({
     >
       <View style={{ flexDirection: "row", alignItems: "stretch" }}>
         <View style={{ flex: 1, minWidth: 0, height: columnHeight, position: "relative" }}>
-          <View style={{ flex: 1, width: "100%", flexDirection: isMobile ? "column" : "row", alignItems: "flex-start" }}>
-            <View style={{ marginRight: isMobile ? 0 : 14, marginBottom: isMobile ? 8 : 0, justifyContent: "flex-start", flexShrink: 0 }}>
+          <View style={{ flex: 1, width: "100%", flexDirection: "row", alignItems: "flex-start" }}>
+            <View style={{ marginRight: 14, marginBottom: 0, justifyContent: "flex-start", flexShrink: 0 }}>
               {avatarUrl ? (
                 <Image
                   source={{ uri: avatarUrl }}
@@ -157,30 +158,32 @@ export function UserSummaryCard({
                 </View>
               )}
             </View>
-            <View style={{ flex: 1, width: "100%", minWidth: 0 }}>
-              <Text
-                style={{
-                  color: theme.colors.strongSurfaceText,
-                  fontSize: nameSize,
-                  lineHeight: nameLineHeight,
-                  fontWeight: "800",
-                }}
-                numberOfLines={1}
-              >
-                {name || "Profile"}
-              </Text>
-              <Text
-                style={{
-                  color: theme.colors.success,
-                  fontSize: usernameSize,
-                  lineHeight: usernameLineHeight,
-                  fontWeight: "700",
-                }}
-                numberOfLines={1}
-              >
-                @{username || "username"}
-              </Text>
-            </View>
+            {showIdentity ? (
+              <View style={{ flex: 1, width: "100%", minWidth: 0 }}>
+                <Text
+                  style={{
+                    color: theme.colors.strongSurfaceText,
+                    fontSize: nameSize,
+                    lineHeight: nameLineHeight,
+                    fontWeight: "800",
+                  }}
+                  numberOfLines={1}
+                >
+                  {name || "Profile"}
+                </Text>
+                <Text
+                  style={{
+                    color: theme.colors.success,
+                    fontSize: usernameSize,
+                    lineHeight: usernameLineHeight,
+                    fontWeight: "700",
+                  }}
+                  numberOfLines={1}
+                >
+                  @{username || "username"}
+                </Text>
+              </View>
+            ) : null}
           </View>
         </View>
 

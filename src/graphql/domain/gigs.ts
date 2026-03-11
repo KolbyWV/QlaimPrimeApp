@@ -49,8 +49,8 @@ export const CREATE_GIG_MUTATION = gql`
     $description: String
     $type: GigType
     $locationId: ID!
-    $startsAt: String
-    $endsAt: String
+    $startsAt: DateTime
+    $endsAt: DateTime
     $payCents: Int
     $units: Int
     $basePriceCents: Int
@@ -104,8 +104,8 @@ export const UPDATE_GIG_MUTATION = gql`
     $description: String
     $type: GigType
     $locationId: ID
-    $startsAt: String
-    $endsAt: String
+    $startsAt: DateTime
+    $endsAt: DateTime
     $payCents: Int
     $units: Int
     $basePriceCents: Int

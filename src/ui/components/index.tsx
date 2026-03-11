@@ -219,6 +219,7 @@ export function Button({
   disabled = false,
   loading = false,
   style,
+  labelStyle,
 }) {
   const { theme } = useAppTheme();
   const isPrimary = variant === "primary";
@@ -267,6 +268,7 @@ export function Button({
           style={{
             color: textColor,
             ...(theme.typography?.label || { fontSize: 15, fontWeight: "600" }),
+            ...(labelStyle || {}),
           }}
         >
           {label}

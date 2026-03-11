@@ -6,6 +6,7 @@ import { useSession } from "../session";
 import {
   buildApplePassword,
   isAppleAuthCanceled,
+  saveAppleEmailForUser,
   startAppleAuthentication,
 } from "../appleAuth";
 import { useAppTheme } from "../../ui/theme";
@@ -46,15 +47,18 @@ export function SignInScreen({ navigation, route }) {
     setError(null);
 
     try {
-      const { userId, email } = await startAppleAuthentication();
-      if (!email) {
+      const { userId, email: appleEmail } = await startAppleAuthentication();
+      const fallbackEmail = String(email || "").trim().toLowerCase();
+      const resolvedEmail = appleEmail || fallbackEmail || null;
+      if (!resolvedEmail) {
         throw new Error(
-          "Apple did not share an email for this account. Use Sign up with Apple first so we can link your account.",
+          "Apple did not share your email. Enter your email above, then tap Sign in with Apple again.",
         );
       }
 
+      await saveAppleEmailForUser(userId, resolvedEmail);
       await signIn({
-        email,
+        email: resolvedEmail,
         password: buildApplePassword(userId),
       });
     } catch (nextError) {

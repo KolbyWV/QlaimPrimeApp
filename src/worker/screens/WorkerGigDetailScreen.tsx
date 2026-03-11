@@ -299,7 +299,7 @@ export function WorkerGigDetailScreen({ route, navigation }) {
               marginBottom: 12,
             }}
           >
-            <Text style={{ color: theme.colors.strongSurfaceText, fontSize: 30, fontWeight: "800", textAlign: "center" }}>
+            <Text style={{ color: theme.colors.strongSurfaceText, fontSize: 26, fontWeight: "800", textAlign: "center" }}>
               {countdown}
             </Text>
           </View>

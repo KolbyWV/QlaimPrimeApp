@@ -72,6 +72,7 @@ export function WorkerAccountScreen({ navigation }) {
         gigCount={me?.assignments?.length || 0}
         ratingAvg={me?.profile?.ratingAvg ?? 5}
         moneyBalanceCents={balanceCents}
+        showIdentity
       />
 
       {moneyError ? <Text style={{ color: theme.colors.danger, marginBottom: 8 }}>{moneyError.message}</Text> : null}

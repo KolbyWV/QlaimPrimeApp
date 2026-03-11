@@ -131,6 +131,7 @@ export function WorkerShopScreen() {
             starsBalance={me?.profile?.starsBalance || 0}
             gigCount={me?.assignments?.length || 0}
             starsOnly
+            showIdentity
           />
 
           <SearchInput value={search} onChangeText={setSearch} placeholder="Search" />

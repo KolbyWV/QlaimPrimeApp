@@ -49,13 +49,7 @@
     },
     "plugins": [
       "expo-apple-authentication",
-      [
-        "expo-secure-store",
-        {
-          "faceIDPermission": "Allow Qlaim to access your Face ID biometric data.",
-          "touchIDPermission": "Allow Qlaim to access your Touch ID biometric data."
-        }
-      ],
+      "expo-secure-store",
       [
         "expo-image-picker",
         {
