@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useSession } from "../session";
@@ -125,6 +125,32 @@ export function RegisterScreen({ navigation }) {
         disabled={!email || !password || !confirmPassword}
         style={{ minHeight: 56 }}
       />
+
+      <Text
+        style={{
+          marginTop: 12,
+          fontSize: 13,
+          lineHeight: 18,
+          color: theme.colors.textMuted,
+          textAlign: "center",
+        }}
+      >
+        By continuing, you agree to our{" "}
+        <Text
+          style={{ color: modeAccent, fontWeight: "700" }}
+          onPress={() => navigation.navigate("TermsOfService")}
+        >
+          Terms of Service
+        </Text>{" "}
+        and{" "}
+        <Text
+          style={{ color: modeAccent, fontWeight: "700" }}
+          onPress={() => navigation.navigate("PrivacyPolicy")}
+        >
+          Privacy Policy
+        </Text>
+        .
+      </Text>
     </Screen>
   );
 }

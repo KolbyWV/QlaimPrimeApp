@@ -34,12 +34,7 @@ export function ForgotPasswordScreen({ navigation }) {
       <Pressable onPress={() => navigation.goBack()} hitSlop={10} style={{ width: 40, marginBottom: 10 }}>
         <Ionicons name="arrow-back" size={30} color={theme.colors.text} />
       </Pressable>
-
-      <Image
-        source={require("../../images/logos/QlaimBig.png")}
-        style={{ width: 140, height: 140, alignSelf: "center", marginBottom: 16 }}
-        resizeMode="contain"
-      />
+      <Text style={{ color: theme.colors.text, fontSize: 30, fontWeight: "900", letterSpacing: 1 }}>QLAIM</Text>
       <View style={{ alignItems: "center", marginBottom: 16 }}>
         <View
           style={{

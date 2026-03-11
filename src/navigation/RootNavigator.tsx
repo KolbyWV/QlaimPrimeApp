@@ -9,8 +9,10 @@ import { useSession } from "../auth/session";
 import { AdminDashboardScreen } from "../admin/screens/AdminDashboardScreen";
 import { ModeSelectScreen } from "../auth/screens/ModeSelectScreen";
 import { ForgotPasswordScreen } from "../auth/screens/ForgotPasswordScreen";
+import { PrivacyPolicyScreen } from "../auth/screens/PrivacyPolicyScreen";
 import { RegisterScreen } from "../auth/screens/RegisterScreen";
 import { SignInScreen } from "../auth/screens/SignInScreen";
+import { TermsOfServiceScreen } from "../auth/screens/TermsOfServiceScreen";
 import { useAppTheme } from "../ui/theme";
 import { Body, Button, Heading, LoadingState, Screen } from "../ui/components";
 import { CompanyAccountScreen } from "../company/screens/CompanyAccountScreen";
@@ -64,6 +66,14 @@ function AuthNavigator() {
         name="ForgotPassword"
         component={ForgotPasswordScreen}
       />
+      <AuthStack.Screen
+        name="TermsOfService"
+        component={TermsOfServiceScreen}
+      />
+      <AuthStack.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
+      />
     </AuthStack.Navigator>
   );
 }
@@ -79,6 +89,14 @@ function AdminAuthNavigator() {
       <AdminAuthStack.Screen
         name="ForgotPassword"
         component={ForgotPasswordScreen}
+      />
+      <AdminAuthStack.Screen
+        name="TermsOfService"
+        component={TermsOfServiceScreen}
+      />
+      <AdminAuthStack.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
       />
     </AdminAuthStack.Navigator>
   );

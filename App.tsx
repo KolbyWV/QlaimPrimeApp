@@ -4,12 +4,17 @@ import { Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ApolloProvider } from "@apollo/client/react";
 import { StatusBar } from "expo-status-bar";
+import * as SplashScreen from "expo-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { ThemeProvider, useAppTheme } from "./src/ui/theme";
 import { SessionProvider, useSession } from "./src/auth/session";
 import { RootNavigator } from "./src/navigation";
 import { LoadingState, Screen } from "./src/ui/components";
+
+SplashScreen.preventAutoHideAsync().catch(() => {
+  // Ignore if splash is already controlled by runtime.
+});
 
 class AppErrorBoundary extends React.Component {
   constructor(props) {
@@ -38,6 +43,14 @@ class AppErrorBoundary extends React.Component {
 function AppShell() {
   const { apolloClient } = useSession();
   const { themeMode } = useAppTheme();
+
+  React.useEffect(() => {
+    if (!apolloClient) return;
+
+    SplashScreen.hideAsync().catch(() => {
+      // Ignore hide errors to avoid blocking app render.
+    });
+  }, [apolloClient]);
 
   if (!apolloClient) {
     return (

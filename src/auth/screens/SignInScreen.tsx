@@ -131,6 +131,32 @@ export function SignInScreen({ navigation, route }) {
         onPress={() => {}}
         style={{ minHeight: 56, backgroundColor: theme.colors.strongSurface, borderColor: theme.colors.strongSurface }}
       />
+
+      <Text
+        style={{
+          marginTop: 12,
+          fontSize: 13,
+          lineHeight: 18,
+          color: theme.colors.textMuted,
+          textAlign: "center",
+        }}
+      >
+        By continuing, you agree to our{" "}
+        <Text
+          style={{ color: modeAccent, fontWeight: "700" }}
+          onPress={() => navigation.navigate("TermsOfService")}
+        >
+          Terms of Service
+        </Text>{" "}
+        and{" "}
+        <Text
+          style={{ color: modeAccent, fontWeight: "700" }}
+          onPress={() => navigation.navigate("PrivacyPolicy")}
+        >
+          Privacy Policy
+        </Text>
+        .
+      </Text>
     </Screen>
   );
 }

@@ -2,26 +2,31 @@
   "expo": {
     "name": "Qlaim",
     "slug": "prime",
+    "description": "Qlaim mobile app for managing gigs, assignments, and payouts.",
+    "scheme": "qlaim",
+    "primaryColor": "#2CA24D",
     "version": "1.0.0",
+    "runtimeVersion": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#2CA24D"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
+      "requireFullScreen": true,
       "bundleIdentifier": "dev.qlaim.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#2CA24D"
       },
       "package": "dev.qlaim.app"
     },
@@ -29,16 +34,17 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-splash-screen"
     ],
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
     "extra": {
       "eas": {
         "projectId": "a95c8c6d-37e8-4e12-a500-328393c672c1"
       }
     },
-    "owner": "kkinsey0"
+    "owner": "kkinsey0",
+    "updates": {
+      "url": "https://u.expo.dev/a95c8c6d-37e8-4e12-a500-328393c672c1"
+    }
   }
 }
