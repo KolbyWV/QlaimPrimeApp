@@ -1,10 +1,11 @@
-import React, { useCallback } from "react";
-import { Text } from "react-native";
-import { useQuery } from "@apollo/client/react";
+import React, { useCallback, useState } from "react";
+import { Alert, Text } from "react-native";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { useFocusEffect } from "@react-navigation/native";
 
 import { useSession } from "../../auth/session";
 import {
+  DELETE_PROFILE_MUTATION,
   MY_MONEY_TRANSACTIONS_QUERY,
 } from "../../graphql/domain";
 import { Button, Card, Heading, Screen, SectionTitle } from "../../ui/components";
@@ -18,9 +19,11 @@ function calculateMoneyBalance(transactions) {
 export function WorkerAccountScreen({ navigation }) {
   const { theme, themeMode, toggleThemeMode } = useAppTheme();
   const { me, switchMode, signOut, refreshMe } = useSession();
+  const [accountError, setAccountError] = useState(null);
   const { data: moneyData, error: moneyError } = useQuery(MY_MONEY_TRANSACTIONS_QUERY, {
     variables: { limit: 100, offset: 0 },
   });
+  const [deleteProfile, { loading: deletingAccount }] = useMutation(DELETE_PROFILE_MUTATION);
 
   const balanceCents = calculateMoneyBalance(moneyData?.myMoneyTransactions);
   const canAccessAdmin = me?.role === "ADMIN";
@@ -32,6 +35,29 @@ export function WorkerAccountScreen({ navigation }) {
       });
     }, [refreshMe]),
   );
+
+  const confirmDeleteAccount = useCallback(() => {
+    Alert.alert(
+      "Delete account permanently?",
+      "This is permanent and cannot be undone. All account data and access will be removed.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete Account",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              setAccountError(null);
+              await deleteProfile();
+              await signOut();
+            } catch (nextError) {
+              setAccountError(nextError?.message || "Unable to delete account right now.");
+            }
+          },
+        },
+      ],
+    );
+  }, [deleteProfile, signOut]);
 
   return (
     <Screen hideBack scroll contentStyle={{ paddingBottom: 130 }}>
@@ -76,7 +102,15 @@ export function WorkerAccountScreen({ navigation }) {
           variant="secondary"
           onPress={toggleThemeMode}
         />
+        <Button
+          label={deletingAccount ? "Deleting account..." : "Delete Account"}
+          variant="destructive"
+          disabled={deletingAccount}
+          loading={deletingAccount}
+          onPress={confirmDeleteAccount}
+        />
         <Button label="Sign out" variant="destructive" onPress={signOut} style={{ marginBottom: 0 }} />
+        {accountError ? <Text style={{ color: theme.colors.danger, marginBottom: 8 }}>{accountError}</Text> : null}
       </Card>
     </Screen>
   );

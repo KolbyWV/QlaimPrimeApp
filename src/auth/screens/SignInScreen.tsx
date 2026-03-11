@@ -1,8 +1,13 @@
 import React, { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Platform, Pressable, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useSession } from "../session";
+import {
+  buildApplePassword,
+  isAppleAuthCanceled,
+  startAppleAuthentication,
+} from "../appleAuth";
 import { useAppTheme } from "../../ui/theme";
 import { Body, Button, Field, Heading, Screen } from "../../ui/components";
 
@@ -21,6 +26,7 @@ export function SignInScreen({ navigation, route }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
 
   const onSubmit = async () => {
     setLoading(true);
@@ -32,6 +38,32 @@ export function SignInScreen({ navigation, route }) {
       setError(nextError.message || "Unable to sign in.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const onAppleSignIn = async () => {
+    setAppleLoading(true);
+    setError(null);
+
+    try {
+      const { userId, email } = await startAppleAuthentication();
+      if (!email) {
+        throw new Error(
+          "Apple did not share an email for this account. Use Sign up with Apple first so we can link your account.",
+        );
+      }
+
+      await signIn({
+        email,
+        password: buildApplePassword(userId),
+      });
+    } catch (nextError) {
+      if (isAppleAuthCanceled(nextError)) {
+        return;
+      }
+      setError(nextError?.message || "Unable to sign in with Apple.");
+    } finally {
+      setAppleLoading(false);
     }
   };
 
@@ -115,22 +147,28 @@ export function SignInScreen({ navigation, route }) {
         label={loading ? "Signing in..." : "Sign in"}
         onPress={onSubmit}
         loading={loading}
-        disabled={!email || !password}
+        disabled={!email || !password || appleLoading}
         style={{ minHeight: 56, marginBottom: 16 }}
       />
 
-      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}>
-        <View style={{ flex: 1, height: 1, backgroundColor: theme.colors.border }} />
-        <Text style={{ marginHorizontal: 12, color: theme.colors.text, fontWeight: "700", fontSize: 16 }}>Or</Text>
-        <View style={{ flex: 1, height: 1, backgroundColor: theme.colors.border }} />
-      </View>
+      {Platform.OS === "ios" ? (
+        <>
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}>
+            <View style={{ flex: 1, height: 1, backgroundColor: theme.colors.border }} />
+            <Text style={{ marginHorizontal: 12, color: theme.colors.text, fontWeight: "700", fontSize: 16 }}>Or</Text>
+            <View style={{ flex: 1, height: 1, backgroundColor: theme.colors.border }} />
+          </View>
 
-      <Button
-        label="Sign in with Apple"
-        variant="primary"
-        onPress={() => {}}
-        style={{ minHeight: 56, backgroundColor: theme.colors.strongSurface, borderColor: theme.colors.strongSurface }}
-      />
+          <Button
+            label={appleLoading ? "Connecting Apple..." : "Sign in with Apple"}
+            variant="primary"
+            onPress={onAppleSignIn}
+            loading={appleLoading}
+            disabled={loading || appleLoading}
+            style={{ minHeight: 56, backgroundColor: theme.colors.strongSurface, borderColor: theme.colors.strongSurface }}
+          />
+        </>
+      ) : null}
 
       <Text
         style={{

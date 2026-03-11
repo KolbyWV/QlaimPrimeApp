@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
+import { Alert } from "react-native";
 import { useMutation, useQuery } from "@apollo/client/react";
 import * as ImagePicker from "expo-image-picker";
 
 import { useSession } from "../../auth/session";
 import {
   CREATE_IMAGE_UPLOAD_URL_MUTATION,
+  DELETE_PROFILE_MUTATION,
   MY_COMPANIES_QUERY,
   UPDATE_COMPANY_MUTATION,
 } from "../../graphql/domain";
@@ -25,10 +27,34 @@ export function CompanyAccountScreen() {
       await Promise.all([companyQuery.refetch(), refreshMe()]);
     },
   });
+  const [deleteProfile, { loading: deletingAccount }] = useMutation(DELETE_PROFILE_MUTATION);
 
   const membershipCount = me?.companies?.length || 0;
   const canAccessAdmin = me?.role === "ADMIN";
   const [accountError, setAccountError] = useState(null);
+
+  const confirmDeleteAccount = useCallback(() => {
+    Alert.alert(
+      "Delete account permanently?",
+      "This is permanent and cannot be undone. All account data and access will be removed.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete Account",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              setAccountError(null);
+              await deleteProfile();
+              await signOut();
+            } catch (nextError) {
+              setAccountError(nextError?.message || "Unable to delete account right now.");
+            }
+          },
+        },
+      ],
+    );
+  }, [deleteProfile, signOut]);
 
   return (
     <Screen hideBack scroll>
@@ -87,6 +113,13 @@ export function CompanyAccountScreen() {
           label={themeMode === "dark" ? "Use Light Theme" : "Use Dark Theme"}
           variant="secondary"
           onPress={toggleThemeMode}
+        />
+        <Button
+          label={deletingAccount ? "Deleting account..." : "Delete Account"}
+          variant="destructive"
+          disabled={deletingAccount}
+          loading={deletingAccount}
+          onPress={confirmDeleteAccount}
         />
         <Button label="Sign out" variant="secondary" onPress={signOut} />
         {accountError ? <Body style={{ color: theme.colors.danger, marginBottom: 0 }}>{accountError}</Body> : null}

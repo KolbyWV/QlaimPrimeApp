@@ -15,6 +15,7 @@
     "@react-navigation/native": "^7.1.28",
     "@react-navigation/native-stack": "^7.13.0",
     "expo": "^54.0.33",
+    "expo-apple-authentication": "^55.0.8",
     "expo-dev-client": "~6.0.20",
     "expo-image-picker": "~17.0.8",
     "expo-secure-store": "~15.0.8",
@@ -33,11 +34,21 @@
   "devDependencies": {
     "@babel/core": "^7.28.4",
     "@types/react": "^19.2.14",
-    "@types/react-native": "^0.72.8",
     "typescript": "^5.9.3"
   },
   "expo": {
+    "doctor": {
+      "appConfigFieldsNotSyncedCheck": {
+        "enabled": false
+      }
+    },
+    "install": {
+      "exclude": [
+        "@types/react"
+      ]
+    },
     "plugins": [
+      "expo-apple-authentication",
       [
         "expo-secure-store",
         {

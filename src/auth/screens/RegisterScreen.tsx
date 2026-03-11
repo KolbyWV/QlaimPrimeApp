@@ -1,14 +1,20 @@
 import React, { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Platform, Pressable, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useSession } from "../session";
+import {
+  buildApplePassword,
+  isAppleAuthCanceled,
+  isExistingAccountError,
+  startAppleAuthentication,
+} from "../appleAuth";
 import { Body, Button, Field, Heading, Screen } from "../../ui/components";
 import { useAppTheme } from "../../ui/theme";
 
 export function RegisterScreen({ navigation }) {
   const { theme } = useAppTheme();
-  const { register, mode } = useSession();
+  const { register, signIn, mode } = useSession();
   const isCompanyAuth = mode === "company";
   const modeAccent = isCompanyAuth ? theme.colors.warning : theme.colors.primary;
   const modeLabel = mode === "company" ? "COMPANY PORTAL" : (mode === "admin" ? "ADMIN PORTAL" : "CONTRACTOR PORTAL");
@@ -22,6 +28,7 @@ export function RegisterScreen({ navigation }) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
 
   const onSubmit = async () => {
     if (password !== confirmPassword) {
@@ -38,6 +45,37 @@ export function RegisterScreen({ navigation }) {
       setError(nextError.message || "Unable to register.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const onAppleSignUp = async () => {
+    setAppleLoading(true);
+    setError(null);
+
+    try {
+      const { userId, email } = await startAppleAuthentication();
+      if (!email) {
+        throw new Error(
+          "Apple did not share your email for this account. Use Sign in with Apple from the Sign In screen if you already created an account before.",
+        );
+      }
+
+      const password = buildApplePassword(userId);
+      try {
+        await register({ email, password });
+      } catch (registerError) {
+        if (!isExistingAccountError(registerError?.message)) {
+          throw registerError;
+        }
+        await signIn({ email, password });
+      }
+    } catch (nextError) {
+      if (isAppleAuthCanceled(nextError)) {
+        return;
+      }
+      setError(nextError?.message || "Unable to sign up with Apple.");
+    } finally {
+      setAppleLoading(false);
     }
   };
 
@@ -122,9 +160,28 @@ export function RegisterScreen({ navigation }) {
         label={loading ? "Creating account..." : "Sign up"}
         onPress={onSubmit}
         loading={loading}
-        disabled={!email || !password || !confirmPassword}
+        disabled={!email || !password || !confirmPassword || appleLoading}
         style={{ minHeight: 56 }}
       />
+
+      {Platform.OS === "ios" ? (
+        <>
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}>
+            <View style={{ flex: 1, height: 1, backgroundColor: theme.colors.border }} />
+            <Text style={{ marginHorizontal: 12, color: theme.colors.text, fontWeight: "700", fontSize: 16 }}>Or</Text>
+            <View style={{ flex: 1, height: 1, backgroundColor: theme.colors.border }} />
+          </View>
+
+          <Button
+            label={appleLoading ? "Connecting Apple..." : "Sign up with Apple"}
+            variant="primary"
+            loading={appleLoading}
+            disabled={loading || appleLoading}
+            onPress={onAppleSignUp}
+            style={{ minHeight: 56, backgroundColor: theme.colors.strongSurface, borderColor: theme.colors.strongSurface }}
+          />
+        </>
+      ) : null}
 
       <Text
         style={{
