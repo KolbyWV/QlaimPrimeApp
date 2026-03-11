@@ -2,7 +2,7 @@
   "expo": {
     "name": "Qlaim",
     "slug": "prime",
-    "description": "Qlaim mobile app for managing gigs, assignments, and payouts.",
+    "description": "Qlaim mobile app for managing gigs and getting paid.",
     "scheme": "qlaim",
     "primaryColor": "#2CA24D",
     "version": "1.0.0",

@@ -11,7 +11,14 @@ import { ThemeProvider, useAppTheme } from "./src/ui/theme";
 import { SessionProvider, useSession } from "./src/auth/session";
 import { RootNavigator } from "./src/navigation";
 import { LoadingState, Screen } from "./src/ui/components";
+import {
+  clearLastFatalError,
+  installGlobalErrorHandler,
+  readLastFatalError,
+  recordFatalError,
+} from "./src/utils/crashDiagnostics";
 
+installGlobalErrorHandler();
 SplashScreen.preventAutoHideAsync().catch(() => {
   // Ignore if splash is already controlled by runtime.
 });
@@ -24,6 +31,12 @@ class AppErrorBoundary extends React.Component {
 
   static getDerivedStateFromError(error) {
     return { error };
+  }
+
+  componentDidCatch(error, info) {
+    recordFatalError("error-boundary", error, {
+      componentStack: info?.componentStack || null,
+    });
   }
 
   render() {
@@ -43,6 +56,23 @@ class AppErrorBoundary extends React.Component {
 function AppShell() {
   const { apolloClient } = useSession();
   const { themeMode } = useAppTheme();
+
+  React.useEffect(() => {
+    let cancelled = false;
+
+    async function reportRecoveredCrash() {
+      const lastFatalError = await readLastFatalError();
+      if (!lastFatalError || cancelled) return;
+
+      console.error("[startup] recovered from prior fatal error", lastFatalError);
+      await clearLastFatalError();
+    }
+
+    reportRecoveredCrash();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   React.useEffect(() => {
     if (!apolloClient) return;
