@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from "react";
-import { Alert, Text } from "react-native";
+import { Alert, Pressable, Text, View } from "react-native";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useFocusEffect } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 import { useSession } from "../../auth/session";
 import {
@@ -61,7 +62,27 @@ export function WorkerAccountScreen({ navigation }) {
 
   return (
     <Screen hideBack scroll contentStyle={{ paddingBottom: 130 }}>
-      <Heading style={{ fontSize: 32, marginBottom: 10 }}>PROFILE</Heading>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+        <Heading style={{ fontSize: 32, marginBottom: 0 }}>PROFILE</Heading>
+        <Pressable
+          onPress={toggleThemeMode}
+          hitSlop={8}
+          style={({ pressed }) => ({
+            width: 42,
+            height: 42,
+            borderRadius: 999,
+            alignItems: "center",
+            justifyContent: "center",
+            opacity: pressed ? 0.7 : 1,
+          })}
+        >
+          <Ionicons
+            name={themeMode === "dark" ? "sunny" : "moon"}
+            size={28}
+            color={themeMode === "dark" ? "#FDB813" : theme.colors.text}
+          />
+        </Pressable>
+      </View>
 
       <UserSummaryCard
         name={`${me?.profile?.firstName || ""} ${me?.profile?.lastName || ""}`.trim() || me?.email || "Profile"}
@@ -94,15 +115,15 @@ export function WorkerAccountScreen({ navigation }) {
           variant="secondary"
           onPress={() => navigation.navigate("Transactions")}
         />
+        <Button
+          label="Help"
+          variant="secondary"
+          onPress={() => navigation.navigate("Help")}
+        />
         <Button label="Switch to Company Mode" onPress={() => switchMode("company")} />
         {canAccessAdmin ? (
           <Button label="Switch to Admin Mode" variant="secondary" onPress={() => switchMode("admin")} />
         ) : null}
-        <Button
-          label={themeMode === "dark" ? "Use Light Theme" : "Use Dark Theme"}
-          variant="secondary"
-          onPress={toggleThemeMode}
-        />
         <Button
           label={deletingAccount ? "Deleting account..." : "Delete Account"}
           variant="destructive"

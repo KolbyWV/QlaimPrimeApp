@@ -20,16 +20,20 @@ import { CompanyCreateGigScreen } from "../company/screens/CompanyCreateGigScree
 import { CompanyCreateLocationScreen } from "../company/screens/CompanyCreateLocationScreen";
 import { CompanyDashboardScreen } from "../company/screens/CompanyDashboardScreen";
 import { CompanyGigsScreen } from "../company/screens/CompanyGigsScreen";
+import { CompanyHelpScreen } from "../company/screens/CompanyHelpScreen";
 import { CompanyMembersScreen } from "../company/screens/CompanyMembersScreen";
 import { CompanyOnboardingScreen } from "../company/screens/CompanyOnboardingScreen";
 import { CompanyReviewsScreen } from "../company/screens/CompanyReviewsScreen";
+import { CompanySupportScreen } from "../company/screens/CompanySupportScreen";
 import { WorkerAccountScreen } from "../worker/screens/WorkerAccountScreen";
+import { WorkerHelpScreen } from "../worker/screens/WorkerHelpScreen";
 import { WorkerWatchlistScreen } from "../worker/screens/WorkerWatchlistScreen";
 import { WorkerGigDetailScreen } from "../worker/screens/WorkerGigDetailScreen";
 import { WorkerHomeScreen } from "../worker/screens/WorkerHomeScreen";
 import { WorkerOnboardingScreen } from "../worker/screens/WorkerOnboardingScreen";
 import { WorkerPastAssignmentsScreen } from "../worker/screens/WorkerPastAssignmentsScreen";
 import { WorkerShopScreen } from "../worker/screens/WorkerShopScreen";
+import { WorkerSupportScreen } from "../worker/screens/WorkerSupportScreen";
 import { WorkerUpdateProfileScreen } from "../worker/screens/WorkerUpdateProfileScreen";
 import { WorkerWalletScreen } from "../worker/screens/WorkerWalletScreen";
 
@@ -42,6 +46,7 @@ const WorkerAccountStack = createNativeStackNavigator();
 const CompanyOnboardingStack = createNativeStackNavigator();
 const CompanyDashboardStack = createNativeStackNavigator();
 const CompanyGigsStack = createNativeStackNavigator();
+const CompanyAccountStack = createNativeStackNavigator();
 const AdminStack = createNativeStackNavigator();
 const WorkerTabs = createBottomTabNavigator();
 const CompanyTabs = createBottomTabNavigator();
@@ -154,6 +159,33 @@ function CompanyGigsNavigator() {
   );
 }
 
+function CompanyAccountNavigator() {
+  return (
+    <CompanyAccountStack.Navigator screenOptions={{ headerShown: false }}>
+      <CompanyAccountStack.Screen
+        name="CompanyAccountHome"
+        component={CompanyAccountScreen}
+      />
+      <CompanyAccountStack.Screen
+        name="CompanyHelp"
+        component={CompanyHelpScreen}
+      />
+      <CompanyAccountStack.Screen
+        name="CompanyHelpTermsOfService"
+        component={TermsOfServiceScreen}
+      />
+      <CompanyAccountStack.Screen
+        name="CompanyHelpPrivacyPolicy"
+        component={PrivacyPolicyScreen}
+      />
+      <CompanyAccountStack.Screen
+        name="CompanySupport"
+        component={CompanySupportScreen}
+      />
+    </CompanyAccountStack.Navigator>
+  );
+}
+
 function WorkerHomeNavigator() {
   return (
     <WorkerHomeStack.Navigator screenOptions={{ headerShown: false }}>
@@ -187,6 +219,22 @@ function WorkerAccountNavigator() {
       <WorkerAccountStack.Screen
         name="UpdateProfile"
         component={WorkerUpdateProfileScreen}
+      />
+      <WorkerAccountStack.Screen
+        name="Help"
+        component={WorkerHelpScreen}
+      />
+      <WorkerAccountStack.Screen
+        name="HelpTermsOfService"
+        component={TermsOfServiceScreen}
+      />
+      <WorkerAccountStack.Screen
+        name="HelpPrivacyPolicy"
+        component={PrivacyPolicyScreen}
+      />
+      <WorkerAccountStack.Screen
+        name="Support"
+        component={WorkerSupportScreen}
       />
     </WorkerAccountStack.Navigator>
   );
@@ -297,7 +345,7 @@ function CompanyTabsNavigator() {
       <CompanyTabs.Screen name="Gigs" component={CompanyGigsNavigator} />
       <CompanyTabs.Screen name="Members" component={CompanyMembersScreen} />
       <CompanyTabs.Screen name="Reviews" component={CompanyReviewsScreen} />
-      <CompanyTabs.Screen name="Account" component={CompanyAccountScreen} />
+      <CompanyTabs.Screen name="Account" component={CompanyAccountNavigator} />
     </CompanyTabs.Navigator>
   );
 }
@@ -335,7 +383,7 @@ function AdminNavigator() {
       />
       <AdminStack.Screen
         name="AdminCompanyAccount"
-        component={CompanyAccountScreen}
+        component={CompanyAccountNavigator}
       />
     </AdminStack.Navigator>
   );

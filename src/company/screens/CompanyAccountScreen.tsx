@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from "react";
-import { Alert, Text } from "react-native";
+import { Alert, Pressable, Text, View } from "react-native";
 import { useMutation, useQuery } from "@apollo/client/react";
 import * as ImagePicker from "expo-image-picker";
+import { Ionicons } from "@expo/vector-icons";
 
 import { useSession } from "../../auth/session";
 import {
@@ -14,7 +15,7 @@ import { useAppTheme } from "../../ui/theme";
 import { Badge, Body, Button, Card, Heading, Screen } from "../../ui/components";
 import { uploadImageWithPresignedUrl } from "../../utils/imageUpload";
 
-export function CompanyAccountScreen() {
+export function CompanyAccountScreen({ navigation }) {
   const { me, switchMode, signOut, refreshMe } = useSession();
   const { theme, themeMode, toggleThemeMode } = useAppTheme();
   const companyQuery = useQuery(MY_COMPANIES_QUERY);
@@ -58,8 +59,28 @@ export function CompanyAccountScreen() {
 
   return (
     <Screen hideBack scroll>
-      <Heading>Company account</Heading>
-      <Body style={{ marginBottom: 12 }}>Switch modes, theme, or session.</Body>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+        <Heading style={{ marginBottom: 0 }}>Company account</Heading>
+        <Pressable
+          onPress={toggleThemeMode}
+          hitSlop={8}
+          style={({ pressed }) => ({
+            width: 42,
+            height: 42,
+            borderRadius: 999,
+            alignItems: "center",
+            justifyContent: "center",
+            opacity: pressed ? 0.7 : 1,
+          })}
+        >
+          <Ionicons
+            name={themeMode === "dark" ? "sunny" : "moon"}
+            size={26}
+            color={themeMode === "dark" ? "#FDB813" : theme.colors.text}
+          />
+        </Pressable>
+      </View>
+      <Body style={{ marginBottom: 12 }}>Switch modes, account actions, or session.</Body>
 
       <Card>
         <Badge label="User" />
@@ -105,15 +126,15 @@ export function CompanyAccountScreen() {
             }
           }}
         />
+        <Button
+          label="Help"
+          variant="secondary"
+          onPress={() => navigation.navigate("CompanyHelp")}
+        />
         <Button label="Switch to Contractor Mode" onPress={() => switchMode("worker")} />
         {canAccessAdmin ? (
           <Button label="Switch to Admin Mode" variant="secondary" onPress={() => switchMode("admin")} />
         ) : null}
-        <Button
-          label={themeMode === "dark" ? "Use Light Theme" : "Use Dark Theme"}
-          variant="secondary"
-          onPress={toggleThemeMode}
-        />
         <Button
           label={deletingAccount ? "Deleting account..." : "Delete Account"}
           variant="destructive"
