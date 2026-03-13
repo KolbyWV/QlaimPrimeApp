@@ -16,6 +16,39 @@ import { useAppTheme } from "../../ui/theme";
 
 const ACTIVE_ASSIGNMENT_STATUSES = new Set(["CLAIMED", "ACCEPTED", "STARTED"]);
 
+function getCountdownUrgency(endsAt, nowMs, theme) {
+  if (!endsAt) {
+    return {
+      backgroundColor: theme.colors.strongSurface,
+      textColor: theme.colors.strongSurfaceText,
+    };
+  }
+
+  const endMs = new Date(endsAt).getTime();
+  if (!Number.isFinite(endMs)) {
+    return {
+      backgroundColor: theme.colors.strongSurface,
+      textColor: theme.colors.strongSurfaceText,
+    };
+  }
+
+  const diffSeconds = Math.max(0, Math.floor((endMs - nowMs) / 1000));
+  if (diffSeconds < 15 * 60) {
+    return { backgroundColor: "#C0392B", textColor: "#FFFFFF" };
+  }
+  if (diffSeconds < 30 * 60) {
+    return { backgroundColor: "#D97706", textColor: "#FFFFFF" };
+  }
+  if (diffSeconds < 60 * 60) {
+    return { backgroundColor: "#A66B00", textColor: "#FFFFFF" };
+  }
+
+  return {
+    backgroundColor: theme.colors.strongSurface,
+    textColor: theme.colors.strongSurfaceText,
+  };
+}
+
 function formatCountdown(endsAt, nowMs) {
   if (!endsAt) return null;
   const endMs = new Date(endsAt).getTime();
@@ -23,7 +56,8 @@ function formatCountdown(endsAt, nowMs) {
   const diffSeconds = Math.max(0, Math.floor((endMs - nowMs) / 1000));
   const hours = String(Math.floor(diffSeconds / 3600)).padStart(2, "0");
   const minutes = String(Math.floor((diffSeconds % 3600) / 60)).padStart(2, "0");
-  return `${hours}:${minutes}`;
+  const seconds = String(diffSeconds % 60).padStart(2, "0");
+  return `${hours}:${minutes}:${seconds}`;
 }
 
 function buildMapsLink(gig) {
@@ -143,11 +177,15 @@ export function WorkerGigDetailScreen({ route, navigation }) {
   );
 
   const countdown = useMemo(() => formatCountdown(gig?.endsAt, nowMs), [gig?.endsAt, nowMs]);
+  const countdownAppearance = useMemo(
+    () => getCountdownUrgency(gig?.endsAt, nowMs, theme),
+    [gig?.endsAt, nowMs, theme],
+  );
 
   const mapLink = useMemo(() => buildMapsLink(gig), [gig]);
   useEffect(() => {
     if (!gig?.endsAt) return undefined;
-    const interval = setInterval(() => setNowMs(Date.now()), 30 * 1000);
+    const interval = setInterval(() => setNowMs(Date.now()), 1000);
     return () => clearInterval(interval);
   }, [gig?.endsAt]);
 
@@ -293,13 +331,13 @@ export function WorkerGigDetailScreen({ route, navigation }) {
         {countdown ? (
           <View
             style={{
-              backgroundColor: theme.colors.strongSurface,
+              backgroundColor: countdownAppearance.backgroundColor,
               borderRadius: theme.radii.sm,
               paddingVertical: 10,
               marginBottom: 12,
             }}
           >
-            <Text style={{ color: theme.colors.strongSurfaceText, fontSize: 26, fontWeight: "800", textAlign: "center" }}>
+            <Text style={{ color: countdownAppearance.textColor, fontSize: 26, fontWeight: "800", textAlign: "center" }}>
               {countdown}
             </Text>
           </View>

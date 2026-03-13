@@ -5,6 +5,39 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAppTheme } from "../theme";
 import { Card } from "../components";
 
+function getCountdownUrgency(endsAt, nowMs, theme) {
+  if (!endsAt) {
+    return {
+      backgroundColor: theme.colors.strongSurface,
+      textColor: theme.colors.strongSurfaceText,
+    };
+  }
+
+  const end = new Date(endsAt).getTime();
+  if (!Number.isFinite(end)) {
+    return {
+      backgroundColor: theme.colors.strongSurface,
+      textColor: theme.colors.strongSurfaceText,
+    };
+  }
+
+  const remainingSeconds = Math.max(0, Math.floor((end - nowMs) / 1000));
+  if (remainingSeconds < 15 * 60) {
+    return { backgroundColor: "#C0392B", textColor: "#FFFFFF" };
+  }
+  if (remainingSeconds < 30 * 60) {
+    return { backgroundColor: "#D97706", textColor: "#FFFFFF" };
+  }
+  if (remainingSeconds < 60 * 60) {
+    return { backgroundColor: "#A66B00", textColor: "#FFFFFF" };
+  }
+
+  return {
+    backgroundColor: theme.colors.strongSurface,
+    textColor: theme.colors.strongSurfaceText,
+  };
+}
+
 function formatCountdown(endsAt, nowMs) {
   if (!endsAt) {
     return null;
@@ -18,7 +51,8 @@ function formatCountdown(endsAt, nowMs) {
   const remainingSeconds = Math.max(0, Math.floor((end - nowMs) / 1000));
   const hours = String(Math.floor(remainingSeconds / 3600)).padStart(2, "0");
   const minutes = String(Math.floor((remainingSeconds % 3600) / 60)).padStart(2, "0");
-  return `${hours}:${minutes}`;
+  const seconds = String(remainingSeconds % 60).padStart(2, "0");
+  return `${hours}:${minutes}:${seconds}`;
 }
 
 function formatElapsed(sinceAt, nowMs) {
@@ -34,7 +68,8 @@ function formatElapsed(sinceAt, nowMs) {
   const elapsedSeconds = Math.max(0, Math.floor((nowMs - start) / 1000));
   const hours = String(Math.floor(elapsedSeconds / 3600)).padStart(2, "0");
   const minutes = String(Math.floor((elapsedSeconds % 3600) / 60)).padStart(2, "0");
-  return `${hours}:${minutes}`;
+  const seconds = String(elapsedSeconds % 60).padStart(2, "0");
+  return `${hours}:${minutes}:${seconds}`;
 }
 
 export function GigCard({
@@ -57,6 +92,16 @@ export function GigCard({
     if (timerMode === "elapsed") return formatElapsed(timerStartedAt, nowMs);
     return formatCountdown(gig?.endsAt, nowMs);
   }, [gig?.endsAt, nowMs, timerMode, timerStartedAt]);
+  const timerAppearance = useMemo(() => {
+    if (timerMode === "countdown") {
+      return getCountdownUrgency(gig?.endsAt, nowMs, theme);
+    }
+
+    return {
+      backgroundColor: theme.colors.strongSurface,
+      textColor: theme.colors.strongSurfaceText,
+    };
+  }, [gig?.endsAt, nowMs, theme, timerMode]);
   const defaultCardWidth = useMemo(() => {
     if (Platform.OS === "web") {
       return 340;
@@ -68,7 +113,7 @@ export function GigCard({
   useEffect(() => {
     const hasTimerSource = timerMode === "elapsed" ? Boolean(timerStartedAt) : Boolean(gig?.endsAt);
     if (!hasTimerSource || timerMode === "none") return undefined;
-    const interval = setInterval(() => setNowMs(Date.now()), 30 * 1000);
+    const interval = setInterval(() => setNowMs(Date.now()), 1000);
     return () => clearInterval(interval);
   }, [gig?.endsAt, timerMode, timerStartedAt]);
 
@@ -167,12 +212,12 @@ export function GigCard({
           style={{
             marginTop: theme.spacing.md,
             borderRadius: theme.radii.sm,
-            backgroundColor: theme.colors.strongSurface,
+            backgroundColor: timerAppearance.backgroundColor,
             paddingVertical: 10,
             alignItems: "center",
           }}
         >
-          <Text style={{ color: theme.colors.strongSurfaceText, fontSize: 28, lineHeight: 32, fontWeight: "800" }}>
+          <Text style={{ color: timerAppearance.textColor, fontSize: 28, lineHeight: 32, fontWeight: "800" }}>
             {timerText}
           </Text>
         </View>

@@ -419,7 +419,7 @@ export function WorkerHomeScreen({ route, navigation }) {
         <GigCard
           gig={selectedAssignment.gig}
           watched={watchlistByGigId.has(selectedAssignment.gigId)}
-          timerMode={selectedAssignment.status === "STARTED" ? "elapsed" : "none"}
+          timerMode={ACTIVE_ASSIGNMENT_STATUSES.has(selectedAssignment.status) ? "elapsed" : "none"}
           timerStartedAt={
             selectedAssignment.claimedAt ||
             selectedAssignment.assignedAt ||
